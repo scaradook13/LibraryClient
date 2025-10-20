@@ -469,7 +469,7 @@ const handleClick = async () => {
   if (isDisabled.value) return;
   isDisabled.value = true;
 
-  await saveBorrower();
+  await addButton();
 
   // Re-enable after 3 seconds
   setTimeout(() => {
