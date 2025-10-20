@@ -369,7 +369,7 @@ const newBook = ref({
   author: '',
   subject: 'Select Category',
   year: '',
-  quantity: ''
+  quantity: 1
 });
 
 const newCategory = ref({
@@ -384,7 +384,7 @@ function addButton() {
       author: '',
       subject: '',
       year: '',
-      quantity: ''
+      quantity: 1
     };
   } 
   else if (modalType.value === 'category') {
