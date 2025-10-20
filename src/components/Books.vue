@@ -185,6 +185,8 @@
 
   <button
     type="submit"
+    :disabled="isDisabled"
+    @click="handleClick"
     class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 rounded-lg"
   >
     Save
@@ -405,7 +407,7 @@ function deleteBookHandler(payload) {
 }
 
 const isEditMode = ref(false);
-
+const isDisabled = ref(false);
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const editCategoryName = ref("");
@@ -462,5 +464,17 @@ const filteredBooks = computed(() => {
       book.bookTitle.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
+
+const handleClick = async () => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
+
+  await saveBorrower();
+
+  // Re-enable after 3 seconds
+  setTimeout(() => {
+    isDisabled.value = false;
+  }, 3000);
+};
 
 </script>

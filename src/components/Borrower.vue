@@ -124,7 +124,9 @@
 
           <button
             type="submit"
+            :disabled="isDisabled"
             class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 rounded-lg mt-2"
+            @click="handleClick"
           >
             {{ editMode ? "Save Changes" : "Add Borrower" }}
           </button>
@@ -179,7 +181,7 @@ const { borrowers,categories,books } = storeToRefs(libraryStore);
 
 const selectedCategory = ref(libraryStore.categories[0]?.category);
 
-
+const isDisabled = ref(false);
 const showModal = ref(false);
 const showDeleteModal = ref(false);
 const editMode = ref(false);
@@ -193,14 +195,16 @@ const form = ref({
   contact: "",
 });
 
-const resetForm = () => ({
-  borrowerName: "",
-  category: selectedCategory.value || "",
-  bookBorrowed: "",
-  date: "",
-  dueDate: "",
-  contact: "",
-});
+const resetForm = () => {
+  form.value = {
+    borrowerName: "",
+    category: selectedCategory.value || "",
+    bookBorrowed: "",
+    date: "",
+    dueDate: "",
+    contact: "",
+  };
+};
 
 const openAddBorrowerModal = () => {
   editMode.value = false;
@@ -250,4 +254,16 @@ const closeDeleteModal = () => {
 const filteredBooks = computed(() => 
   books.value.filter(b => b.subject === form.value.category)
 );
+
+const handleClick = async () => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
+
+  await saveBorrower();
+
+  // Re-enable after 3 seconds
+  setTimeout(() => {
+    isDisabled.value = false;
+  }, 3000);
+};
 </script>
