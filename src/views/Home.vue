@@ -4,11 +4,7 @@
     <header class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 shadow-md">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="bg-gray-800 rounded-full p-2 w-16 h-16 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400">
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-            </svg>
-          </div>
+          <img src="../assets/logo.png" class="w-20 h-20" alt="">
           <h1 class="text-3xl font-bold text-gray-800 tracking-wide">SCHOLAR SHELF</h1>
         </div>
       </div>
