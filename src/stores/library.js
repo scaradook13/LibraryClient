@@ -9,6 +9,7 @@ export const useLibraryStore = defineStore('library', () => {
   const borrowers = ref([])
   const totalBorrowers = ref(0)
   const overdue = ref(0);
+  const transactions = ref([])
 
   const newBook = async (payload) => {
     try {
@@ -96,14 +97,16 @@ export const useLibraryStore = defineStore('library', () => {
   };
 
   const fetchBorrower = async () => {
-    try {
-      const data = await LibraryService.getAllBorrower();
-      borrowers.value = data;
+  try {
+    const data = await LibraryService.getAllBorrower();
+    borrowers.value = data;
 
-      totalBorrowers.value = data.length;
-    } catch (error) {
-    }
-  };
+    totalBorrowers.value = data.filter(b => b.bookBorrowed && b.bookBorrowed !== "—").length;
+  } catch (error) {
+    console.error("Error fetching borrowers:", error);
+  }
+};
+
 
   const newBorrower = async (payload) => {
     try {
@@ -111,6 +114,7 @@ export const useLibraryStore = defineStore('library', () => {
       await fetchBorrower();
       await fetchBooks();
       await calculateTotalBooks();
+      await fetchTransaction();
       console.log(response);
     } catch (error) {
     }
@@ -133,6 +137,7 @@ export const useLibraryStore = defineStore('library', () => {
       await fetchBorrower();
       await fetchBooks();
       await calculateTotalBooks();
+      await fetchTransaction();
       console.log(response);
     } catch (error) {
       console.log(err.response?.data);
@@ -159,6 +164,28 @@ export const useLibraryStore = defineStore('library', () => {
   return days > 0 ? `${days} day(s)` : "0";
   };
 
+  const fetchTransaction = async () => {
+    try {
+      const data = await LibraryService.getAllTransaction();
+      transactions.value = data;
+
+    } catch (error) {
+    }
+  };
+
+  const returnBorrower = async (payload) => {
+    try {
+      const response = await LibraryService.returnBorrower(payload);
+      await fetchBorrower();
+      await fetchBooks();
+      await calculateTotalBooks();
+      await fetchTransaction();
+      console.log(response);
+    } catch (error) {
+      console.log(err.response?.data);
+    }
+  };
+
 
   return { 
     newBook,
@@ -181,6 +208,9 @@ export const useLibraryStore = defineStore('library', () => {
     totalBorrowers,
     overdue,
     overdueList,
-    getDaysOverdue
+    getDaysOverdue,
+    transactions,
+    fetchTransaction,
+    returnBorrower
    }
 })

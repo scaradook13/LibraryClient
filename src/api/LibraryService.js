@@ -113,5 +113,23 @@ async updateBorrower(payload) {
     }
   }
 
+  async getAllTransaction() {
+    try {
+      const response = await this.api.get("/getAllTransaction");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async returnBorrower(payload) {
+    try {
+      const response = await this.api.patch("/returnBorrower", payload);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 export default new LibraryService();
