@@ -1,27 +1,63 @@
 <template>
   <div class="max-w-6xl mx-auto">
     <div class="bg-white rounded-lg shadow-md p-6">
-      <!-- Category Buttons -->
-       <h1 class="text-2xl font-bold mb-4">BOOKS CATEGORY</h1>
-      <div class="flex gap-4 mb-6 overflow-auto pb-2">
-        <button
-    v-for="cat in categories"
+    <!-- Header with Edit Mode Toggle -->
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-2xl font-bold">BOOKS CATEGORY</h1>
+      <button
+        @click="toggleEditMode"
+        class="px-3 py-2 rounded font-semibold transition-colors"
+        :class="isEditMode ? 'bg-gray-400 text-white' : 'bg-yellow-400 text-gray-800 hover:bg-yellow-300'"
+      >
+        {{ isEditMode ? "Cancel Edit" : "Edit Category" }}
+      </button>
+    </div>
+
+    <!-- Category Buttons -->
+    <div class="flex gap-4 mb-6 overflow-auto pb-2">
+      <div
+        v-for="cat in categories"
         :key="cat._id"
-        @click="selectedCategory = cat.category"
-        :class="[
-        'px-6 py-2 rounded-lg font-semibold transition-colors',
-        selectedCategory === cat.category
-      ? 'bg-yellow-400 text-gray-800'
-      : 'bg-white border-2 border-gray-800 text-gray-800 hover:bg-gray-50'
-         ]"
+        class="relative flex items-center"
+      >
+        <button
+          @click="!isEditMode && (selectedCategory = cat.category)"
+          :class="[
+            'px-6 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2',
+            selectedCategory === cat.category && !isEditMode
+              ? 'bg-yellow-400 text-gray-800'
+              : 'bg-white border-2 border-gray-800 text-gray-800 hover:bg-gray-50'
+          ]"
         >
-        {{ cat.category }}
+          {{ cat.category }}
+          <!-- Edit/Delete icons when edit mode is active -->
+        <div
+          v-if="isEditMode"
+          class="flex gap-1 "
+        >
+          <button
+            @click="openEditModal(cat)"
+            class="text-blue-600 hover:text-blue-800"
+            title="Edit"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg>
+          </button>
+          <button
+            @click="openDeleteModal(cat)"
+            class="text-red-600 hover:text-red-800"
+            title="Delete"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
         </button>
       </div>
+    </div>
 
       <!-- Add Buttons -->
-      <div class="flex gap-6 w-[40%]">
-        <button
+      <div class="flex w-full justify-between">
+        <div class="flex gap-6">
+          <button
           class="mb-6 px-4 py-2 border-2 border-gray-800 rounded-lg font-semibold hover:bg-gray-50 flex items-center gap-2"
           @click="openModal('category')"
         >
@@ -46,6 +82,30 @@
           </svg>
           Add New Book
         </button>
+
+        </div>
+        <div class="relative">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search books..."
+              class="mb-6 px-4 py-2 pl-9 border-2 border-gray-800 rounded-lg font-semibold hover:bg-gray-50 flex items-center gap-2"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 absolute left-3 top-2.5 text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-4.35-4.35M5 11a6 6 0 1112 0 6 6 0 01-12 0z"
+              />
+            </svg>
+        </div>
       </div>
 
       <!-- Category Display -->
@@ -64,7 +124,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(book, idx) in books.filter(b => b.subject === selectedCategory)"
+                v-for="(book, idx) in filteredBooks"
                 :key="idx"
                 :class="idx % 2 === 0 ? 'bg-yellow-400' : 'bg-yellow-300'"
               >
@@ -151,11 +211,19 @@
       </h2>
 
       <div v-if="actionType === 'edit'" class="space-y-3">
-        <input v-model="selectedBook.title" type="text" class="w-full border p-2 rounded" />
+        <input v-model="selectedBook._id" hidden type="number" />
+        <input v-model="selectedBook.bookTitle" type="text" class="w-full border p-2 rounded" />
         <input v-model="selectedBook.author" type="text" class="w-full border p-2 rounded" />
+        <select v-model="selectedBook.subject" class="w-full border p-2 rounded mb-2">
+        <option disabled selected>Select Category</option>
+        <option v-for="cat in libraryStore.categories" :key="cat._id" :value="cat.category">
+        {{ cat.category }}
+        </option>
+        </select>
         <input v-model="selectedBook.year" type="text" class="w-full border p-2 rounded" />
-        <input v-model="selectedBook.qty" type="number" class="w-full border p-2 rounded" />
+        <input v-model="selectedBook.quantity" type="number" class="w-full border p-2 rounded" />
         <button
+            @click="updateBookHandler"
           class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg"
         >
           Update
@@ -164,7 +232,7 @@
 
       <div v-else class="text-center">
         <p class="mb-4 text-gray-700">
-          Are you sure you want to delete <span class="font-bold">{{ selectedBook.title }}</span>?
+          Are you sure you want to delete <span class="font-bold">{{ selectedBook.bookTitle }}</span>?
         </p>
         <div class="flex justify-center gap-4">
           <button
@@ -174,6 +242,7 @@
             Cancel
           </button>
           <button
+            @click="deleteBookHandler(selectedBook)"
             class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg"
           >
             Delete
@@ -182,10 +251,84 @@
       </div>
     </div>
   </div>
+
+  <!-- EDIT CATEGORY MODAL -->
+<div
+  v-if="showEditModal"
+  class="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/40 z-50"
+>
+  <div class="bg-white rounded-xl shadow-xl p-6 w-[400px] relative">
+    <!-- Close Button -->
+    <button
+      class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+      @click="closeEditModal"
+    >
+      ✖
+    </button>
+
+    <h2 class="text-xl font-bold mb-4 text-center">Edit Category</h2>
+
+    <form @submit.prevent="confirmEdit(selectedForEdit)" class="space-y-4">
+      <input
+        v-model="editCategoryName"
+        type="text"
+        placeholder="Category Name"
+        class="w-full border p-2 rounded mb-2"
+      />
+
+      <button
+        type="submit"
+        class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 rounded-lg"
+      >
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE CATEGORY MODAL -->
+<div
+  v-if="showDeleteModal"
+  class="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/40 z-50"
+>
+  <div class="bg-white rounded-xl shadow-xl p-6 w-[400px] relative">
+    <!-- Close Button -->
+    <button
+      class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+      @click="closeDeleteModal"
+    >
+      ✖
+    </button>
+
+    <h2 class="text-xl font-bold mb-4 text-center text-red-600">
+      Delete Category
+    </h2>
+
+    <p class="text-center mb-4">
+      Are you sure you want to delete
+      <strong class="text-gray-900">"{{ selectedForDelete.category }}"</strong>?
+    </p>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button
+        @click="closeDeleteModal"
+        class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
+      >
+        Cancel
+      </button>
+      <button
+        @click="confirmDelete(selectedForDelete)"
+        class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
 </template>
 
 <script setup>
-import { ref, } from "vue";
+import { ref,computed } from "vue";
 import { storeToRefs } from 'pinia';
 import { Trash2, SquarePen } from "lucide-vue-next";
 import { useLibraryStore } from "@/stores/library";
@@ -194,11 +337,9 @@ const { categories, books } = storeToRefs(libraryStore);
 
 const selectedCategory = ref(libraryStore.categories[0]?.category);
 
-// Add modals
 const isModalOpen = ref(false);
 const modalType = ref("");
 
-// Action modals
 const isActionModalOpen = ref(false);
 const actionType = ref("");
 const selectedBook = ref({});
@@ -211,7 +352,6 @@ function closeModal() {
   isModalOpen.value = false;
 }
 
-// ACTION MODALS
 function openActionModal(type, book) {
   actionType.value = type;
   selectedBook.value = { ...book }; // copy book data
@@ -253,4 +393,74 @@ function addButton() {
   }
   closeModal();
 }
+
+function updateBookHandler() {
+  libraryStore.updateBook(selectedBook.value);
+  closeActionModal();
+}
+
+function deleteBookHandler(payload) {
+  libraryStore.deleteBook(payload);
+  closeActionModal();
+}
+
+const isEditMode = ref(false);
+
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const editCategoryName = ref("");
+const selectedForEdit = ref(null);
+const selectedForDelete = ref(null);
+
+// Toggle edit mode
+const toggleEditMode = () => {
+  isEditMode.value = !isEditMode.value;
+};
+
+// --- Edit Category ---
+const openEditModal = (cat) => {
+  selectedForEdit.value = cat;
+  editCategoryName.value = cat.category;
+  showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+  editCategoryName.value = "";
+};
+
+const confirmEdit = (payload) => {
+  const updatedCategory = {
+    ...payload,
+    category: editCategoryName.value
+  };
+  libraryStore.updateCategory(updatedCategory);
+  closeEditModal();
+};
+
+// --- Delete Category ---
+const openDeleteModal = (cat) => {
+  selectedForDelete.value = cat;
+  showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+};
+
+const confirmDelete = (payload) => {
+  libraryStore.deleteCategory(payload);
+  closeDeleteModal();
+};
+
+const searchQuery = ref("");
+
+const filteredBooks = computed(() => {
+  return books.value.filter(
+    (book) =>
+      book.subject === selectedCategory.value &&
+      book.bookTitle.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
 </script>

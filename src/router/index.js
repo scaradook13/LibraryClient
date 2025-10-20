@@ -18,6 +18,7 @@ router.beforeEach(async (to, from, next) => {
   await libraryStore.fetchCategories();
   await libraryStore.fetchBooks();
   await libraryStore.calculateTotalBooks();
+  await libraryStore.fetchBorrower();
     next();
 });
 export default router

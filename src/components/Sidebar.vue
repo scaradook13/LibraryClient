@@ -58,8 +58,8 @@ const UserIcon = (props) => h('svg', { xmlns: "http://www.w3.org/2000/svg", widt
 const menuItems = [
   { id: 'dashboard', icon: HomeIcon, label: 'DashBoard' },
   { id: 'books', icon: BookIcon, label: 'Books' },
+  { id: 'borrower', icon: UserIcon, label: 'Borrower' },
   { id: 'overdue', icon: ClockIcon, label: 'Overdue List' },
   { id: 'transactions', icon: FileTextIcon, label: 'Transactions' },
-  { id: 'borrower', icon: UserIcon, label: 'Borrower' }
 ];
 </script>

@@ -50,25 +50,68 @@ class LibraryService extends BaseService {
     }
   }
 
-  async updateBook() {
+  async updateBook(payload) {
     try {
-      const response = await this.api.patch("/updateBook");
+      const response = await this.api.patch("/updateBook", payload);
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteBook() {
+  async deleteBook(payload) {
+  try {
+    const response = await this.api.post("/deleteBook", payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async deleteCategory(payload) {
+  try {
+    const response = await this.api.post("/deleteCategory", payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async updateCategory(payload) {
     try {
-      const response = await this.api.delete("/deleteBook");
+      const response = await this.api.patch("/updateCategory", payload);
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
+  async getAllBorrower() {
+    try {
+      const response = await this.api.get("/getAllBorrower");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  async deleteBorrower(payload) {
+  try {
+    const response = await this.api.post("/deleteBorrower", payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async updateBorrower(payload) {
+    try {
+      const response = await this.api.patch("/updateBorrower", payload);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
 }
 export default new LibraryService();

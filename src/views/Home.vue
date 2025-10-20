@@ -21,13 +21,9 @@
       <main class="flex-1 p-6">
         <Dashboard 
           v-if="activeMenu === 'dashboard'" 
-          :stats="stats" 
-          @open-modal="openModal"
         />
         <Books 
           v-if="activeMenu === 'books'" 
-          :books="books" 
-          @open-modal="openModal"
         />
         <Overdue 
           v-if="activeMenu === 'overdue'" 
@@ -40,45 +36,20 @@
         <Borrower v-if="activeMenu === 'borrower'" />
       </main>
     </div>
-
-    <!-- Modal -->
-    <Modal 
-      :is-open="showModal !== null" 
-      :modal-type="showModal" 
-      @close="showModal = null"
-    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import Sidebar from '../components/Sidebar.vue';
 import Dashboard from '../components/Dashboard.vue';
 import Books from '../components/Books.vue';
 import Overdue from '../components/Overdue.vue';
 import Transactions from '../components/Transactions.vue';
 import Borrower from '../components/Borrower.vue';
-import Modal from '../components/Modal.vue';
 import { useBookStore } from '../stores/bookStore';
 
-
-const { books, transactions, overdueList, stats } = useBookStore();
+const {  transactions, overdueList  } = useBookStore();
 
 const activeMenu = ref('dashboard');
-const searchQuery = ref('');
-const showModal = ref(null);
-
-const menuLabels = {
-  dashboard: 'DashBoard',
-  books: 'Books',
-  overdue: 'Overdue List',
-  transactions: 'Transactions',
-  borrower: 'Borrower'
-};
-
-const currentPageLabel = computed(() => menuLabels[activeMenu.value] || 'DashBoard');
-
-const openModal = (modalType) => {
-  showModal.value = modalType;
-};
 </script>
