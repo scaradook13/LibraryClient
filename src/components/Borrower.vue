@@ -160,34 +160,101 @@
           {{ showModal === 'edit' ? 'Edit Borrower' : 'Add Borrower' }}
         </h2>
 
-        <form @submit.prevent="saveBorrower" class="space-y-2">
-          <input v-model="form.borrowerName" type="text" placeholder="Borrower Name" class="w-full border p-2 rounded" required />
-          <select v-model="form.category" class="w-full border p-2 rounded" required>
-            <option disabled value="">Select Category</option>
-            <option v-for="cat in categories" :key="cat._id" :value="cat.category">{{ cat.category }}</option>
-          </select>
-          <select v-model="form.bookBorrowed" class="w-full border p-2 rounded" required>
-            <option disabled value="">Select Book</option>
-            <option
-              v-for="book in filteredBooks"
-              :key="book._id"
-              :value="book.bookTitle"
-              :disabled="book.quantity === 0"
-            >
-              {{ book.bookTitle }}
-            </option>
-          </select>
-          <input v-model="form.date" type="date" class="w-full border p-2 rounded" required />
-          <input v-model="form.dueDate" type="date" class="w-full border p-2 rounded" required />
-          <input v-model="form.contact" type="text" placeholder="Contact Number" class="w-full border p-2 rounded" required />
+        <form @submit.prevent="saveBorrower" class="space-y-4">
+          <!-- Borrower Name -->
+          <div>
+            <label for="borrowerName" class="block text-gray-700 font-semibold mb-1">Borrower Name</label>
+            <input
+              id="borrowerName"
+              v-model="form.borrowerName"
+              type="text"
+              placeholder="Enter borrower name"
+              class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              required
+            />
+          </div>
 
+          <!-- Category -->
+          <div>
+            <label for="category" class="block text-gray-700 font-semibold mb-1">Category</label>
+            <select
+              id="category"
+              v-model="form.category"
+              class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              required
+            >
+              <option disabled value="">Select category</option>
+              <option v-for="cat in categories" :key="cat._id" :value="cat.category">{{ cat.category }}</option>
+            </select>
+          </div>
+
+          <!-- Book Borrowed -->
+          <div>
+            <label for="bookBorrowed" class="block text-gray-700 font-semibold mb-1">Book Borrowed</label>
+            <select
+              id="bookBorrowed"
+              v-model="form.bookBorrowed"
+              class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              required
+            >
+              <option disabled value="">Select book</option>
+              <option
+                v-for="book in filteredBooks"
+                :key="book._id"
+                :value="book.bookTitle"
+                :disabled="book.quantity === 0"
+              >
+                {{ book.bookTitle }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Borrowed Date -->
+          <div>
+            <label for="date" class="block text-gray-700 font-semibold mb-1">Borrowed Date</label>
+            <input
+              id="date"
+              v-model="form.date"
+              type="date"
+              class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              required
+            />
+          </div>
+
+          <!-- Due Date -->
+          <div>
+            <label for="dueDate" class="block text-gray-700 font-semibold mb-1">Due Date</label>
+            <input
+              id="dueDate"
+              v-model="form.dueDate"
+              type="date"
+              class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              required
+            />
+          </div>
+
+          <!-- Contact -->
+          <div>
+            <label for="contact" class="block text-gray-700 font-semibold mb-1">Contact Number</label>
+            <input
+              id="contact"
+              v-model="form.contact"
+              type="text"
+              placeholder="Enter contact number"
+              class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              required
+            />
+          </div>
+
+          <!-- Submit Button -->
           <button
             type="submit"
-            class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 rounded-lg mt-2"
+            class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 rounded-lg mt-2 transition duration-200"
           >
             {{ showModal === 'edit' ? 'Save Changes' : 'Add Borrower' }}
           </button>
         </form>
+
       </div>
     </div>
 
