@@ -180,6 +180,7 @@
 >
   <div class="bg-white rounded-xl shadow-xl p-6 w-[400px] relative">
     <button
+    :disabled="isDisabled"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
       @click="closeModal"
     >
@@ -198,12 +199,17 @@
           required
         />
       </div>
-
       <button
+        :disabled="isDisabled"
         type="submit"
-        class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold py-2 rounded-lg transition"
+        :class="[
+          'w-full font-semibold py-2 rounded-lg transition',
+          isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
+        ]"
       >
-        Add Category
+        {{ isDisabled ? 'Processing...' : 'Add Category' }}
       </button>
     </form>
   </div>
@@ -216,6 +222,7 @@
 >
   <div class="bg-white rounded-xl shadow-xl p-6 w-[400px] relative">
     <button
+    :disabled="isDisabled"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
       @click="closeModal"
     >
@@ -283,10 +290,16 @@
       </div>
 
       <button
+        :disabled="isDisabled"
         type="submit"
-        class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold py-2 rounded-lg transition"
+        :class="[
+          'w-full font-semibold py-2 rounded-lg transition',
+          isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
+        ]"
       >
-        Add Book
+        {{ isDisabled ? 'Processing...' : 'Add Book' }}
       </button>
     </form>
   </div>
@@ -299,6 +312,7 @@
 >
   <div class="bg-white rounded-xl shadow-xl p-6 w-[400px] relative">
     <button
+    :disabled="isDisabled"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
       @click="closeEditModal"
     >
@@ -320,6 +334,7 @@
 
       <div class="flex justify-end space-x-2 mt-4">
         <button
+        :disabled="isDisabled"
           type="button"
           @click="closeEditModal"
           class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition"
@@ -327,11 +342,17 @@
           Cancel
         </button>
         <button
-          type="submit"
-          class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold px-4 py-2 rounded-lg transition"
-        >
-          Save Changes
-        </button>
+        :disabled="isDisabled"
+        type="submit"
+        :class="[
+          'font-semibold px-4 py-2 rounded-lg transition',
+          isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
+        ]"
+      >
+        {{ isDisabled ? 'Processing...' : 'Save Changes' }}
+      </button>
       </div>
     </form>
   </div>
@@ -344,6 +365,7 @@
 >
   <div class="bg-white rounded-xl shadow-xl p-6 w-[380px] relative text-center">
     <button
+    :disabled="isDisabled"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
       @click="closeDeleteModal"
     >
@@ -359,16 +381,23 @@
 
     <div class="flex justify-center space-x-3">
       <button
+      :disabled="isDisabled"
         @click="closeDeleteModal"
         class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition"
       >
         Cancel
       </button>
       <button
-        @click="confirmDelete(selectedForDelete)"
-        class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition"
+      @click="confirmDelete(selectedForDelete)"
+        :disabled="isDisabled"
+        :class="[
+          'font-semibold py-2 rounded-lg transition',
+          isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition'
+        ]"
       >
-        Delete
+        {{ isDisabled ? 'Processing...' : 'Delete' }}
       </button>
     </div>
   </div>
@@ -381,6 +410,7 @@
 >
   <div class="bg-white rounded-xl shadow-xl p-6 w-[420px] relative">
     <button
+    :disabled="isDisabled"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
       @click="closeActionModal"
     >
@@ -447,6 +477,7 @@
 
       <div class="flex justify-end space-x-2 mt-4">
         <button
+        :disabled="isDisabled"
           type="button"
           @click="closeActionModal"
           class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition"
@@ -454,11 +485,17 @@
           Cancel
         </button>
         <button
-          type="submit"
-          class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold px-4 py-2 rounded-lg transition"
-        >
-          Save Changes
-        </button>
+        :disabled="isDisabled"
+        type="submit"
+        :class="[
+          'font-semibold py-2 px-4 rounded-lg transition',
+          isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
+        ]"
+      >
+        {{ isDisabled ? 'Processing...' : 'Save Changes' }}
+      </button>
       </div>
     </form>
   </div>
@@ -471,6 +508,7 @@
 >
   <div class="bg-white rounded-xl shadow-xl p-6 w-[380px] relative text-center">
     <button
+    :disabled="isDisabled"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
       @click="closeActionModal"
     >
@@ -486,6 +524,7 @@
 
     <div class="flex justify-center space-x-3">
       <button
+      :disabled="isDisabled"
         @click="closeActionModal"
         class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition"
       >
@@ -493,9 +532,15 @@
       </button>
       <button
         @click="deleteBookHandler(selectedBook)"
-        class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition"
+        :disabled="isDisabled"
+        :class="[
+          'font-semibold py-2 rounded-lg transition',
+          isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition'
+        ]"
       >
-        Delete
+        {{ isDisabled ? 'Processing...' : 'Delete' }}
       </button>
     </div>
   </div>
@@ -559,6 +604,9 @@ const newCategory = ref({
 });
 
 const addButton = async () => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
+
   try {
     if (modalType.value === "book") {
       await libraryStore.newBook(newBook.value);
@@ -575,30 +623,42 @@ const addButton = async () => {
       toast.success("Category added successfully!");
       newCategory.value = { category: "" };
     }
+
     closeModal();
   } catch (err) {
     toast.error("Failed to add data. Please try again.");
+  } finally {
+    isDisabled.value = false;
   }
 };
 
+
 // ------------------ UPDATE & DELETE BOOK ------------------ //
 const updateBookHandler = async () => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
   try {
     await libraryStore.updateBook(selectedBook.value);
     toast.success("Book updated successfully!");
     closeActionModal();
   } catch (err) {
     toast.error("Failed to update book.");
+  }finally {
+    isDisabled.value = false;
   }
 };
 
 const deleteBookHandler = async (payload) => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
   try {
     await libraryStore.deleteBook(payload);
     toast.success("Book deleted successfully!");
     closeActionModal();
   } catch (err) {
     toast.error("Failed to delete book.");
+  }finally {
+    isDisabled.value = false;
   }
 };
 
@@ -624,6 +684,8 @@ const closeEditModal = () => {
 };
 
 const confirmEdit = async (payload) => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
   try {
     const updatedCategory = { ...payload, category: editCategoryName.value };
     await libraryStore.updateCategory(updatedCategory);
@@ -631,6 +693,8 @@ const confirmEdit = async (payload) => {
     closeEditModal();
   } catch (err) {
     toast.error("Failed to update category.");
+  }finally {
+    isDisabled.value = false;
   }
 };
 
@@ -644,12 +708,16 @@ const closeDeleteModal = () => {
 };
 
 const confirmDelete = async (payload) => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
   try {
     await libraryStore.deleteCategory(payload);
     toast.success("Category deleted successfully!");
     closeDeleteModal();
   } catch (err) {
     toast.error("Failed to delete category.");
+  }finally {
+    isDisabled.value = false;
   }
 };
 
@@ -665,9 +733,4 @@ const filteredBooks = computed(() => {
 
 // ------------------ DISABLE ADD BUTTON TEMPORARILY ------------------ //
 const isDisabled = ref(false);
-const handleClick = async () => {
-  if (isDisabled.value) return;
-  isDisabled.value = true;
-  setTimeout(() => (isDisabled.value = false), 3000);
-};
 </script>

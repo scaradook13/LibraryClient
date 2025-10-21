@@ -90,7 +90,7 @@
                   </svg>
                 </button>
 
-                <button
+                <button :disabled="borrower?.bookBorrowed === '—'"
                   @click="openModal('return', borrower)"
                   class="text-green-600 hover:text-green-800"
                   title="Return"
@@ -155,7 +155,7 @@
       class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
     >
       <div class="bg-white rounded-xl shadow-xl p-6 w-[90%] sm:w-[400px] relative">
-        <button class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" @click="closeModal">✖</button>
+        <button :disabled="isDisabled" class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" @click="closeModal">✖</button>
         <h2 class="text-xl font-bold mb-4 text-center">
           {{ showModal === 'edit' ? 'Edit Borrower' : 'Add Borrower' }}
         </h2>
@@ -247,12 +247,18 @@
           </div>
 
           <!-- Submit Button -->
-          <button
-            type="submit"
-            class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 rounded-lg mt-2 transition duration-200"
-          >
-            {{ showModal === 'edit' ? 'Save Changes' : 'Add Borrower' }}
-          </button>
+        <button
+          type="submit"
+          :disabled="isDisabled"
+          :class="[
+            'w-full font-bold py-2 rounded-lg mt-2 transition duration-200',
+            isDisabled
+              ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+              : 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
+          ]"
+        >
+          {{ isDisabled ? 'Processing...' : (showModal === 'edit' ? 'Save Changes' : 'Add Borrower') }}
+        </button>
         </form>
 
       </div>
@@ -264,19 +270,28 @@
       class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
     >
       <div class="bg-white rounded-xl shadow-xl p-6 w-[90%] sm:w-[400px] relative">
-        <button class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" @click="closeModal">✖</button>
+        <button :disabled="isDisabled" class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" @click="closeModal">✖</button>
         <h2 class="text-xl font-bold mb-4 text-center text-red-600">Delete Borrower</h2>
         <p class="text-center mb-4">
           Are you sure you want to delete <strong>{{ borrowerToDelete?.borrowerName }}</strong>?
+          <span v-if="borrowerToDelete?.bookBorrowed !== '—'" class="text-red-600">
+            This borrower has an active book borrowed.
+          </span>
         </p>
         <div class="flex justify-end gap-2">
-          <button @click="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
+          <button :disabled="isDisabled" @click="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
           <button
             @click="confirmDelete"
-            class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
+            :disabled="isDisabled"
+            :class="[
+            'font-semibold py-2 rounded-lg transition',
+            isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold'
+          ]"
           >
-            Delete
-          </button>
+            {{ isDisabled ? 'Processing...' : 'Delete' }}
+          </button>       
         </div>
       </div>
     </div>
@@ -287,7 +302,7 @@
       class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
     >
       <div class="bg-white rounded-xl shadow-xl p-6 w-[90%] sm:w-[400px] relative">
-        <button class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" @click="closeModal">✖</button>
+        <button :disabled="isDisabled" class="absolute top-3 right-3 text-gray-600 hover:text-gray-800" @click="closeModal">✖</button>
         <h2 class="text-xl font-bold mb-4 text-center text-blue-600">Return Book</h2>
         <p class="text-center mb-4">
           Are you sure you want to mark
@@ -295,12 +310,18 @@
           <strong>"{{ borrowerToReturn?.bookBorrowed }}"</strong> as returned?
         </p>
         <div class="flex justify-end gap-2">
-          <button @click="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
+          <button :disabled="isDisabled" @click="closeModal" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">Cancel</button>
           <button
             @click="confirmReturn"
-            class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+            :disabled="isDisabled"
+            :class="[
+            'font-semibold py-2 rounded-lg transition',
+            isDisabled
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold'
+          ]"
           >
-            Confirm Return
+            {{ isDisabled ? 'Processing...' : 'Confirm Return' }}
           </button>
         </div>
       </div>
@@ -374,32 +395,67 @@ const closeModal = () => {
 };
 
 // ---- SAVE / UPDATE ----
-const saveBorrower = () => {
-  if (editMode.value) {
-    libraryStore.updateBorrower(form.value);
-    toast.success("Updated borrower successfully!");
-  } else {
-    libraryStore.newBorrower(form.value);
-    toast.success("New borrower added successfully!");
+const saveBorrower = async () => {
+  if (isDisabled.value) return;
+  isDisabled.value = true;
+
+  try {
+    if (editMode.value) {
+      await libraryStore.updateBorrower(form.value);
+      toast.success("Updated borrower successfully!");
+    } else {
+      await libraryStore.newBorrower(form.value);
+      toast.success("New borrower added successfully!");
+    }
+    closeModal();
+  } catch (err) {
+    toast.error("Failed to save borrower. Please try again.");
+    console.error(err);
+  } finally {
+    isDisabled.value = false;
   }
-  closeModal();
 };
+
 
 // ---- DELETE ----
-const confirmDelete = () => {
+const confirmDelete = async () => {
+  if (isDisabled.value) return;
   if (!borrowerToDelete.value) return;
-  libraryStore.deleteBorrower(borrowerToDelete.value);
-  toast.success("Borrower deleted successfully!");
-  closeModal();
+
+  isDisabled.value = true;
+
+  try {
+    await libraryStore.deleteBorrower(borrowerToDelete.value);
+    toast.success("Borrower deleted successfully!");
+    closeModal();
+  } catch (err) {
+    toast.error("Failed to delete borrower. Please try again.");
+    console.error(err);
+  } finally {
+    isDisabled.value = false;
+  }
 };
 
+
 // ---- RETURN ----
-const confirmReturn = () => {
+const confirmReturn = async () => {
+  if (isDisabled.value) return;
   if (!borrowerToReturn.value) return;
-  libraryStore.returnBorrower(borrowerToReturn.value);
-  toast.success("Borrower returned book successfully!");
-  closeModal();
+
+  isDisabled.value = true;
+
+  try {
+    await libraryStore.returnBorrower(borrowerToReturn.value);
+    toast.success("Borrower returned book successfully!");
+    closeModal();
+  } catch (err) {
+    toast.error("Failed to process return. Please try again.");
+    console.error(err);
+  } finally {
+    isDisabled.value = false;
+  }
 };
+
 
 // ---- FILTERS ----
 const filteredBooks = computed(() =>
@@ -415,4 +471,5 @@ const filteredBorrowers = computed(() => {
       b.bookBorrowed.toLowerCase().includes(query)
   );
 });
+
 </script>

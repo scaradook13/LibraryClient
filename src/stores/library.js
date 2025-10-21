@@ -97,7 +97,13 @@ export const useLibraryStore = defineStore("library", () => {
 
   const overdueList = computed(() => {
     const today = new Date();
-    return borrowers.value.filter((b) => new Date(b.dueDate) < today);
+    today.setHours(0, 0, 0, 0);
+
+    return borrowers.value.filter((b) => {
+      const dueDate = new Date(b.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate < today;
+    });
   });
 
   watch(
@@ -111,10 +117,16 @@ export const useLibraryStore = defineStore("library", () => {
   const getDaysOverdue = (dueDate) => {
     const today = new Date();
     const due = new Date(dueDate);
+
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+
     const diff = today - due;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
     return days > 0 ? `${days} day(s)` : "0";
   };
+
 
 
   const fetchTransaction = async () => {
