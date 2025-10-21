@@ -509,7 +509,9 @@ import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { SquarePen, Trash2, Plus, BookOpen, Search } from "lucide-vue-next";
 import { useLibraryStore } from "@/stores/library";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const libraryStore = useLibraryStore();
 const { categories, books } = storeToRefs(libraryStore);
 
@@ -556,32 +558,48 @@ const newCategory = ref({
   category: "",
 });
 
-const addButton = () => {
-  if (modalType.value === "book") {
-    libraryStore.newBook(newBook.value);
-    newBook.value = {
-      bookTitle: "",
-      author: "",
-      subject: "Select Category",
-      year: "",
-      quantity: 1,
-    };
-  } else if (modalType.value === "category") {
-    libraryStore.newCategory(newCategory.value);
-    newCategory.value = { category: "" };
+const addButton = async () => {
+  try {
+    if (modalType.value === "book") {
+      await libraryStore.newBook(newBook.value);
+      toast.success("New book added successfully!");
+      newBook.value = {
+        bookTitle: "",
+        author: "",
+        subject: "Select Category",
+        year: "",
+        quantity: 1,
+      };
+    } else if (modalType.value === "category") {
+      await libraryStore.newCategory(newCategory.value);
+      toast.success("Category added successfully!");
+      newCategory.value = { category: "" };
+    }
+    closeModal();
+  } catch (err) {
+    toast.error("Failed to add data. Please try again.");
   }
-  closeModal();
 };
 
 // ------------------ UPDATE & DELETE BOOK ------------------ //
-const updateBookHandler = () => {
-  libraryStore.updateBook(selectedBook.value);
-  closeActionModal();
+const updateBookHandler = async () => {
+  try {
+    await libraryStore.updateBook(selectedBook.value);
+    toast.success("Book updated successfully!");
+    closeActionModal();
+  } catch (err) {
+    toast.error("Failed to update book.");
+  }
 };
 
-const deleteBookHandler = (payload) => {
-  libraryStore.deleteBook(payload);
-  closeActionModal();
+const deleteBookHandler = async (payload) => {
+  try {
+    await libraryStore.deleteBook(payload);
+    toast.success("Book deleted successfully!");
+    closeActionModal();
+  } catch (err) {
+    toast.error("Failed to delete book.");
+  }
 };
 
 // ------------------ CATEGORY EDIT & DELETE ------------------ //
@@ -605,10 +623,15 @@ const closeEditModal = () => {
   editCategoryName.value = "";
 };
 
-const confirmEdit = (payload) => {
-  const updatedCategory = { ...payload, category: editCategoryName.value };
-  libraryStore.updateCategory(updatedCategory);
-  closeEditModal();
+const confirmEdit = async (payload) => {
+  try {
+    const updatedCategory = { ...payload, category: editCategoryName.value };
+    await libraryStore.updateCategory(updatedCategory);
+    toast.success("Category updated successfully!");
+    closeEditModal();
+  } catch (err) {
+    toast.error("Failed to update category.");
+  }
 };
 
 const openDeleteModal = (cat) => {
@@ -620,9 +643,14 @@ const closeDeleteModal = () => {
   showDeleteModal.value = false;
 };
 
-const confirmDelete = (payload) => {
-  libraryStore.deleteCategory(payload);
-  closeDeleteModal();
+const confirmDelete = async (payload) => {
+  try {
+    await libraryStore.deleteCategory(payload);
+    toast.success("Category deleted successfully!");
+    closeDeleteModal();
+  } catch (err) {
+    toast.error("Failed to delete category.");
+  }
 };
 
 // ------------------ SEARCH FILTER ------------------ //
@@ -640,8 +668,6 @@ const isDisabled = ref(false);
 const handleClick = async () => {
   if (isDisabled.value) return;
   isDisabled.value = true;
-  await addButton();
   setTimeout(() => (isDisabled.value = false), 3000);
 };
 </script>
-

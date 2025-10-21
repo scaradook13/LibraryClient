@@ -313,6 +313,9 @@
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useLibraryStore } from "@/stores/library";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const libraryStore = useLibraryStore();
 const { borrowers, categories, books } = storeToRefs(libraryStore);
@@ -371,26 +374,30 @@ const closeModal = () => {
 };
 
 // ---- SAVE / UPDATE ----
-const saveBorrower = async () => {
+const saveBorrower = () => {
   if (editMode.value) {
-    await libraryStore.updateBorrower(form.value);
+    libraryStore.updateBorrower(form.value);
+    toast.success("Updated borrower successfully!");
   } else {
-    await libraryStore.newBorrower(form.value);
+    libraryStore.newBorrower(form.value);
+    toast.success("New borrower added successfully!");
   }
   closeModal();
 };
 
 // ---- DELETE ----
-const confirmDelete = async () => {
+const confirmDelete = () => {
   if (!borrowerToDelete.value) return;
-  await libraryStore.deleteBorrower(borrowerToDelete.value);
+  libraryStore.deleteBorrower(borrowerToDelete.value);
+  toast.success("Borrower deleted successfully!");
   closeModal();
 };
 
 // ---- RETURN ----
-const confirmReturn = async () => {
+const confirmReturn = () => {
   if (!borrowerToReturn.value) return;
-  await libraryStore.returnBorrower(borrowerToReturn.value);
+  libraryStore.returnBorrower(borrowerToReturn.value);
+  toast.success("Borrower returned book successfully!");
   closeModal();
 };
 
