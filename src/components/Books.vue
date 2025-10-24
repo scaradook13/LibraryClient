@@ -270,7 +270,7 @@
           class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
           required
         >
-          <option disabled value="Select Category">Select Category</option>
+          <option disabled value="">Select Category</option>
           <option v-for="cat in categories" :key="cat._id" :value="cat.category">
             {{ cat.category }}
           </option>
@@ -743,4 +743,5 @@ const filteredBooks = computed(() => {
 
 // ------------------ DISABLE ADD BUTTON TEMPORARILY ------------------ //
 const isDisabled = ref(false);
+
 </script>
