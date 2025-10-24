@@ -132,6 +132,11 @@
                   </div>
                 </td>
               </tr>
+              <tr v-if="filteredBooks.length === 0">
+              <td colspan="6" class="text-center py-6 text-gray-500 text-sm sm:text-base">
+                No Books found
+              </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -166,6 +171,11 @@
               </button>
             </div>
           </div>
+          <tr v-if="filteredBooks.length === 0">
+              <td colspan="6" class="text-center py-6 text-gray-500 text-sm sm:text-base">
+                No Books found
+              </td>
+        </tr>
         </div>
       </div>
 
